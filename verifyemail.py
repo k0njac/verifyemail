@@ -27,7 +27,7 @@ def fetch_mx(host):
     logger.info('查找结果为：%s' % res)
     return res
 
-
+results=[]
 def verify_istrue(email):
     '''
     :param email:
@@ -36,6 +36,7 @@ def verify_istrue(email):
     email_list = []
     email_obj = {}
     final_res = {}
+
     if isinstance(email, str) or isinstance(email, bytes):
         email_list.append(email)
     else:
@@ -62,6 +63,7 @@ def verify_istrue(email):
             logger.debug(send_from)
             if send_from[0] == 250 or send_from[0] == 451:
                 final_res[need_verify] = True  # 存在
+                results.append(need_verify)
             elif send_from[0] == 550:
                 final_res[need_verify] = False  # 不存在
             else:
@@ -73,7 +75,8 @@ def verify_istrue(email):
 
 
 if __name__ == '__main__':
-    final_list = verify_istrue(['190758586@qq.com',
-                                'qwer111111111111995@163.com'
-                                ])
-    print(final_list)
+    with open ('email.txt','r') as f:
+        emails=f.readlines()
+        emails = [email.strip() for email in emails]
+    verify_istrue(emails)
+    print(results)
