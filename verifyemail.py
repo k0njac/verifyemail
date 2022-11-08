@@ -55,14 +55,18 @@ def verify_istrue(email):
         s = smtplib.SMTP(host, timeout=10)
         for need_verify in email_obj[key]:
             helo = s.docmd('HELO chacuo.net')
-            logger.debug(helo)
-
-            send_from = s.docmd('MAIL FROM:<3121113@chacuo.net>')
-            logger.debug(send_from)
+            #logger.debug(helo)
+            try:
+                send_from = s.docmd('MAIL FROM:<asd@qq.com>')
+            except:
+                s = smtplib.SMTP(host, timeout=10)
+                send_from = s.docmd('MAIL FROM:<asd@qq.com>')
+            #logger.debug(send_from)
             send_from = s.docmd('RCPT TO:<%s>' % need_verify)
-            logger.debug(send_from)
+            #logger.debug(send_from)
             if send_from[0] == 250 or send_from[0] == 451:
                 final_res[need_verify] = True  # 存在
+                logger.info('%s 存在' % need_verify)
                 results.append(need_verify)
             elif send_from[0] == 550:
                 final_res[need_verify] = False  # 不存在
@@ -77,6 +81,7 @@ def verify_istrue(email):
 if __name__ == '__main__':
     with open ('email.txt','r') as f:
         emails=f.readlines()
-        emails = [email.strip() for email in emails]
+        emails = [email.strip()+"@xxx.com" for email in emails]
+    #print(emails)
     verify_istrue(emails)
     print(results)
